@@ -174,22 +174,31 @@ def save_sample_gif(model, device, noise_schedule, epoch, num_nodes: int = 5):
 
 if __name__ == "__main__":
     model_params = {
-        CONFIG["hidden_embedding_dimension"],
-        CONFIG["message_dimension"],
-        CONFIG["num_layers"],
-        CONFIG["num_timesteps"],
+        key: CONFIG[key]
+        for key in [
+            "hidden_embedding_dimension",
+            "message_dimension",
+            "num_layers",
+            "num_timesteps",
+        ]
     }
     noise_schedule_params = {
-        CONFIG["num_timesteps"],
-        CONFIG["precision_val"],
+        key: CONFIG[key]
+        for key in [
+            "num_timesteps",
+            "precision_val",
+        ]
     }
     loader_params = {
-        CONFIG["num_data_examples"],
-        CONFIG["min_num_nodes"],
-        CONFIG["max_num_nodes"],
-        CONFIG["min_line_length"],
-        CONFIG["max_line_length"],
-        CONFIG["batch_size"],
+        key: CONFIG[key]
+        for key in [
+            "num_data_examples",
+            "min_num_nodes",
+            "max_num_nodes",
+            "min_line_length",
+            "max_line_length",
+            "batch_size",
+        ]
     }
 
     num_timesteps = CONFIG["num_timesteps"]
