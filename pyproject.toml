@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.optional-dependencies]
+dev = [
+    "black>=22.8",
+    "isort>=5.10",
+    "flake8>=5.0",
+    "pydocstyle>=6.1",
+    "pre-commit>=2.3",
+]
+
+[project]
+name = "2D-equivariant-diffusion"
+authors = [
+    { name="Hugh Blayney", email="hugh.blayney@gmail.com" },
+]
+description="Simple example of an equivariant generative diffusion model."
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "torch>=2.0",
+    "torch-geometric>=2.3",
+    "torch-scatter>=2.1",
+    "rich>=13.3",
+]
+dynamic = ["version"]
+
+[tool.setuptools.packages.find]
+include = ["equivariant_diffusion", "equivariant_diffusion.*"]
+
+[project.urls]
+"Homepage" = "https://github.com/HughBlayney/2D-equivariant-diffusion"
