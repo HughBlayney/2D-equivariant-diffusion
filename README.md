@@ -15,7 +15,7 @@ By sampling from a 2D isotropic Gaussian and running the reverse 2D process, we 
 
 Here is one such example of the trained reverse diffusion process in action!
 
-<img src="example_sample.gif" alt="Reverse diffusion process for generating straight line" width=30%>
+<img src="example_sample.gif" alt="Reverse diffusion process for generating straight line" width=75%>
 
 
 ## Training
