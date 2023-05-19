@@ -63,25 +63,31 @@ def compute_z(
     return z_t
 
 
-def sample_from_model(model, device, noise_schedule, num_nodes: int = 5):
+def sample_from_model(
+    model: EquivariantGNN,
+    device: torch.device,
+    noise_schedule: NoiseSchedule,
+    num_nodes: int = 5,
+) -> list[Tensor]:
     """
     Sample z_T and return a sequence of increasingly denoised z_t vectors.
 
     Parameters
     ----------
-    model : _type_
-        _description_
-    device : _type_
-        _description_
-    noise_schedule : _type_
-        _description_
+    model : EquivariantGNN
+        Model that will predict the noise at each reverse diffusion step.
+    device : torch.device
+        Device on which to place the initial noise tensor and edge indices. Must be
+        the same device as the model.
+    noise_schedule : NoiseSchedule
+        Noise schedule on which the model was trained.
     num_nodes : int, optional
-        _description_, by default 5
+        Number of nodes to sample - the shape of the initial noise vector, by default 5
 
     Returns
     -------
-    _type_
-        _description_
+    list[Tensor]
+        List of increasingly denoised z_s tensors.
     """
     with torch.no_grad():
         z_T = torch.randn((num_nodes, 2), device=device)
@@ -141,7 +147,13 @@ def sample_from_model(model, device, noise_schedule, num_nodes: int = 5):
     return all_z_values
 
 
-def save_sample_gif(model, device, noise_schedule, epoch, num_nodes: int = 5):
+def save_sample_gif(
+    model: EquivariantGNN,
+    device: torch.device,
+    noise_schedule: NoiseSchedule,
+    epoch: int,
+    num_nodes: int = 5,
+):
     """Save a gif of this reverse diffusion process."""
     z_values = sample_from_model(model, device, noise_schedule, num_nodes=num_nodes)
 
