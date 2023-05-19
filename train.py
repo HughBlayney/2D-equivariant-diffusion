@@ -161,8 +161,40 @@ def save_sample_gif(
     figsize: Tuple[int, int] = (20, 20),
     plot_path: str = os.path.join("plots", "diffusion_samples"),
     **scatter_kwargs,
-):
-    """Save a gif of this reverse diffusion process."""
+) -> None:
+    """
+    Save a gif of this reverse diffusion process.
+
+    Parameters
+    ----------
+    model : EquivariantGNN
+        Model that will predict the noise at each reverse diffusion step.
+    device : torch.device
+        Device on which to place the initial noise tensor and edge indices. Must be
+        the same device as the model.
+    noise_schedule : NoiseSchedule
+        Noise schedule on which the model was trained.
+    filename : str
+        Filename with which to save this model's gif.
+    num_nodes : int, optional
+        Number of nodes to sample - the shape of the initial noise vector, by default 5
+    axis_limit : float, optional
+        Limit in each dimension of the plotted gif, by default 5.0
+    subsample_factor : int, optional
+        Factor by which the resulting z list will be subsampled before plotting, by
+        default 10. Expect |Z| // subsample_factor frames resulting frames in the
+        subsampled list
+    num_final_frame_repeats : int, optional
+        Number of times to repeat the final frame for clarity, by default 10
+    frame_delay_ms : int, optional
+        Delay time between each frame, passed to the Matplotlib FuncAnimation method as
+        "interval", by default 20
+    figsize : Tuple[int, int], optional
+        figsize argument to pass to the Matplotlib subplots method, by default (20, 20)
+    plot_path : str, optional
+        Path in which to plot the resulting gif, by default
+        os.path.join("plots", "diffusion_samples")
+    """
     z_values = sample_from_model(model, device, noise_schedule, num_nodes=num_nodes)
 
     subsampled_z_values = z_values[::subsample_factor] + [
