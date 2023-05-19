@@ -1,4 +1,5 @@
 from itertools import product
+import os
 from typing import Tuple
 
 import matplotlib.pyplot as plt
@@ -151,36 +152,50 @@ def save_sample_gif(
     model: EquivariantGNN,
     device: torch.device,
     noise_schedule: NoiseSchedule,
-    epoch: int,
+    filename: str,
     num_nodes: int = 5,
+    axis_limit: float = 5.0,
+    subsample_factor: int = 10,
+    num_final_frame_repeats: int = 10,
+    frame_delay_ms: int = 20,
+    figsize: Tuple[int, int] = (20, 20),
+    plot_path: str = os.path.join("plots", "diffusion_samples"),
+    **scatter_kwargs,
 ):
     """Save a gif of this reverse diffusion process."""
     z_values = sample_from_model(model, device, noise_schedule, num_nodes=num_nodes)
 
-    subsampled_z_values = z_values[::10] + [z_values[-1]]
+    subsampled_z_values = z_values[::subsample_factor] + [
+        z_values[-1] for _ in range(num_final_frame_repeats)
+    ]
     print(f"Final z values = {z_values[-1]}")
 
     rc("animation", html="html5")
-    fig, ax = plt.subplots(figsize=(20, 20))
+    fig, ax = plt.subplots(figsize=figsize)
 
-    ax.set_xlim((-10, 10))
-    ax.set_ylim((-10, 10))
+    ax.set_xlim((-axis_limit, axis_limit))
+    ax.set_ylim((-axis_limit, axis_limit))
     ax.axis("equal")
 
-    scatter = ax.scatter([], [])
+    scatter = ax.scatter([], [], **scatter_kwargs)
 
     def init():
         return (scatter,)
 
-    def animate(i):
-        scatter.set_offsets(subsampled_z_values[i].cpu().numpy())
+    def animate(z_values):
+        scatter.set_offsets(z_values.cpu().numpy())
         return (scatter,)
 
     print("Animating")
     anim = animation.FuncAnimation(
-        fig, animate, init_func=init, frames=101, interval=20, blit=True
+        fig,
+        animate,
+        init_func=init,
+        frames=subsampled_z_values,
+        interval=frame_delay_ms,
+        blit=True,
     )
-    anim.save(f"./plots/diffusion_samples/{epoch}.gif", writer="ffmpeg", fps=20)
+    anim.save(os.path.join(plot_path, f"{filename}.gif"), writer="ffmpeg", fps=20)
     print("Finished animating")
 
 
@@ -257,6 +272,8 @@ if __name__ == "__main__":
                 model,
                 device,
                 ns,
-                epoch,
+                str(epoch),
                 num_nodes=10,
+                axis_limit=CONFIG["max_line_length"],
+                s=200,
             )
